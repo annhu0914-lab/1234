@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理測驗</title>
+    <style>
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .question {
+      background-color: #fff;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .option {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      display: block;
+      cursor: pointer;
+      padding: 5px 0;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background-color: #f0f0f0;
+    }
+    .option input[type="radio"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    button {
+      display: block;
+      margin: 0 auto;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      color: #fff;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.2em;
+      line-height: 1.6em;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+    }
+  </style>
+  </head>
+  <body>
+    <h1>心理測驗</h1>
+    <div id="quiz"></div>
+    <button onclick="getResult()">查看結果</button>
+    <div id="result"></div>
+    <script>
+   const questions = [
+  {
+    q: `如果今天突然不用上課，你最可能會怎麼安排？`,
+    options: [
+      { text: "在家休息、追劇、做點自己喜歡但放鬆的事", type: "穩健型" },
+      { text: "去健身房、打工、學習投資或進修增強競爭力", type: "進取型" },
+      { text: "找朋友出去走走、探索新地方或嘗試新活動", type: "實驗型" }
+    ]
+  },
+  {
+    q: `當你打工或實習時，你比較在意的是？`,
+    options: [
+      { text: "工作穩定、時間規律、不要太累", type: "穩健型" },
+      { text: "時薪高、能學到真本事、有表現機會", type: "進取型" },
+      { text: "工作內容有趣、有變化、有新體驗", type: "實驗型" }
+    ]
+  },
+  {
+    q: `朋友約你投資一支「可能賺很多，但也可能賠很多」的標的，你會？`,
+    options: [
+      { text: "婉拒，覺得風險太高", type: "穩健型" },
+      { text: "很有興趣，甚至會自己研究更多加碼", type: "進取型" },
+      { text: "會先小額嘗試，看看過程再說", type: "實驗型" }
+    ]
+  },
+  {
+    q: `如果你期末有一個很難的報告／專題，你通常會？`,
+    options: [
+      { text: "早早開始，一步一步慢慢做完", type: "穩健型" },
+      { text: "壓力越大越有鬥志，會拚到最好", type: "進取型" },
+      { text: "嘗試不同做法，找靈感再動手", type: "實驗型" }
+    ]
+  },
+  {
+    q: `以下哪一種生活最吸引你？`,
+    options: [
+      { text: "穩定上班、固定下班、週末可以好好休息", type: "穩健型" },
+      { text: "工作忙碌，但收入高、成就感強", type: "進取型" },
+      { text: "工作內容多變，可以到處跑、接觸不同領域", type: "實驗型" }
+    ]
+  },
+  {
+    q: `當你存到一筆錢（例如2萬元），你比較會？`,
+    options: [
+      { text: "存起來當備用金", type: "穩健型" },
+      { text: "拿去投資理財，希望錢可以變更多", type: "進取型" },
+      { text: "拿來學新技能、旅行或體驗生活", type: "實驗型" }
+    ]
+  },
+  {
+    q: `在團體作業中，你通常表現比較像？`,
+    options: [
+      { text: "負責整理、確認內容沒有問題的那個人", type: "穩健型" },
+      { text: "當領導者，推進進度、分配工作", type: "進取型" },
+      { text: "提供點子和創意，讓報告更有趣", type: "實驗型" }
+    ]
+  },
+  {
+    q: `如果你發現自己選錯科系或方向，你會？`,
+    options: [
+      { text: "先撐著完成學業，再慢慢轉調", type: "穩健型" },
+      { text: "立刻想辦法轉系或重新規劃", type: "進取型" },
+      { text: "思考怎麼結合現有科系，走出新路線", type: "實驗型" }
+    ]
+  },
+  {
+    q: `如果你未來的薪水是這樣，你比較能接受哪一種？`,
+    options: [
+      { text: "每月固定5萬元，不太會變動", type: "穩健型" },
+      { text: "有時10萬、有時3萬，但上限很高", type: "進取型" },
+      { text: "收入不固定，但自由、有很多可能", type: "實驗型" }
+    ]
+  },
+  {
+    q: `對於陌生的新東西（新APP、新理財方式、新地方）`,
+    options: [
+      { text: "通常先觀望，確定安全再嘗試", type: "穩健型" },
+      { text: "會很快去研究、搶先嘗試", type: "進取型" },
+      { text: "覺得好玩就試，不一定為了賺錢", type: "實驗型" }
+    ]
+  },
+  {
+    q: `你比較害怕的是？`,
+    options: [
+      { text: "沒有安全感、生活不穩定", type: "穩健型" },
+      { text: "輸給別人、沒有成就", type: "進取型" },
+      { text: "每天過一樣的生活，沒有變化", type: "實驗型" }
+    ]
+  },
+  {
+    q: `如果用一句話形容你對未來的期待，你會選？`,
+    options: [
+      { text: "穩穩過好每一天就好", type: "穩健型" },
+      { text: "我要闖出一番成就", type: "進取型" },
+      { text: "我想嘗試不一樣的人生", type: "實驗型" }
+    ]
+  }
+];
+    const quizContainer = document.getElementById('quiz');
+
+    questions.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<p>${index + 1}. ${item.q}</p>`;
+      item.options.forEach((opt, i) => {
+        const id = `q${index}_opt${i}`;
+        div.innerHTML += `<label class="option"><input type="radio" name="q${index}" value="${opt.type}" id="${id}">${opt.text}</label>`;
+      });
+      quizContainer.appendChild(div);
+    });
+
+    const details = {
+      "穩健型":  '<a href="file:///C:/Users/User/OneDrive/Desktop/123.html"target="_blank">詳細資訊</a>',
+      "進取型": `✔ 適合工作：行銷、企劃、業務、管理職<br>✔ 風險偏好：中高風險，願意嘗試<br>✔ 必備技能：決策力、溝通、創意<br>✔ 個人特質：自信、積極、願意挑戰`,
+      "實驗型": `✔ 適合工作：工程師、創作者、研究、設計類<br>✔ 風險偏好：高風險，但富有創新能力<br>✔ 必備技能：創造力、問題解決、技術能力<br>✔ 個人特質：跳脫框架、敢嘗試、新點子多`
+    };
+
+    function getResult() {
+      let total = 0;
+      questions.forEach((item, index) => {
+        const selected = document.querySelector(`input[name='q${index}']:checked`);
+        if (selected) {
+          if (selected.value === "穩健型") total += 3;
+          else if (selected.value === "進取型") total += 2;
+          else total += 1;
+        }
+      });
+
+      if (total === 0) { alert("大小姐，麻煩先乖乖作答再想看結果～"); return; }
+
+      let resultType = "";
+      if (total >=26) resultType = "穩健型";
+      else if (total >= 19) resultType = "進取型";
+      else resultType = "實驗型";
+
+      document.getElementById('result').innerHTML = `<strong>你的類型：${resultType}</strong><br>${details[resultType]}`;
+    }
+  </script>
+  </body>
+</html>
